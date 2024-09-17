@@ -1,3 +1,8 @@
+import sys
+import os
+import logging
+import smtplib
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
@@ -5,14 +10,14 @@ from app.api.routes import api_router
 from app.database import get_db
 from app.models import Vessel
 from app.schemas import VesselCreate, VesselUpdate
-from contextlib import asynccontextmanager
-from email_alert import send_alert_email
-import logging
-import smtplib
-import os
+from app.email_alert import send_alert_email
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
+
+# Add the root of the project to sys.path
+print("PYTHONPATH:", sys.path)
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 # Lifespan event handler
 @asynccontextmanager
