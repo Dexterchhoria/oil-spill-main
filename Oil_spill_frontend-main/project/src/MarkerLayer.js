@@ -1,5 +1,8 @@
-import React from 'react';
+import React, { useState,useEffect } from 'react';
 import { CircleMarker, Popup } from 'react-leaflet';
+
+
+
 
 // Function to generate random dummy data
 const generateDummyData = (count) => {
@@ -30,21 +33,39 @@ const getColorBySpeed = (speed) => {
 };
 
 const MarkerLayer = ({ onOilSpill }) => {
+    //Function to assign data 
+
+    const [vessels, setVessels] = useState([]);
+
+    // Function to get data from api
+    useEffect(()=>{
+        fetchData();
+    },[]);
+    const fetchData = async ()=>{
+        const data = await fetch("http://127.0.0.1:8023/vessels/")
+        const result = await data.json();
+       const realData = await result.slice(0, 5000);
+        console.log(realData);
+        setVessels(realData);
+      
+        
+    }
     // Example function to simulate an oil spill
     const handleMarkerClick = () => {
         // Trigger the oil spill event
         onOilSpill();
     };
+    console.log(vessels[2]);
 
     return (
         <>
-            {dummyData.map((vessel) => (
+            {vessels?.map((vessel) => (
                 <CircleMarker
                     key={vessel.id}
                     center={[vessel.latitude, vessel.longitude]}
                     radius={3} // Adjust the size of the circle
-                    fillColor={getColorBySpeed(vessel.speed)}
-                    color={getColorBySpeed(vessel.speed)} // Border color same as fill color
+                    fillColor={getColorBySpeed(vessel.sog)}
+                    color={getColorBySpeed(vessel.sog)} // Border color same as fill color
                     fillOpacity={0.8}
                     eventHandlers={{
                         click: handleMarkerClick, // Attach the handler to the marker click event
@@ -52,8 +73,8 @@ const MarkerLayer = ({ onOilSpill }) => {
                 >
                     <Popup>
                         <strong>Name:</strong> {vessel.name}<br />
-                        <strong>Speed:</strong> {vessel.speed.toFixed(2)} knots<br />
-                        <strong>Course:</strong> {vessel.course.toFixed(2)}°
+                        <strong>Speed:</strong> {vessel.sog?.toFixed(2)} knots<br />
+                        <strong>Course:</strong> {vessel.cog?.toFixed(2)}°
                     </Popup>
                 </CircleMarker>
             ))}

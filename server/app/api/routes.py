@@ -1,6 +1,7 @@
 # app/api/routes.py
 from fastapi import APIRouter
-from app.api.endpoints import vessels, satellite, anomalies  # Correct import path for your endpoints
+from .endpoints import vessels, satellite, anomalies
+ # Correct import path for your endpoints
 
 api_router = APIRouter()
 
